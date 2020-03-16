@@ -56,7 +56,7 @@ node {
       docker.withRegistry("https://541024090925.dkr.ecr.us-east-2.amazonaws.com", "ecr:us-east-2:aws") {
 	      
       def customImage = docker.build("hello-world-java:${env.BUILD_ID}")
-	      customImage.push() }
+	      customImage.push()
 
      // docker.image("${dockerImageTag}").push()
      // sh "docker login -u admin -p admin123 ${dockerRepoUrl}"
