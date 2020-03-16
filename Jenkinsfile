@@ -7,7 +7,7 @@ node {
     def dockerImage
     // ip address of the docker private repository(nexus)
     
-    def dockerRepoUrl = "541024090925.dkr.ecr.us-east-2.amazonaws.com/"
+    def dockerRepoUrl = "541024090925.dkr.ecr.us-east-2.amazonaws.com"
     def dockerImageName = "springboot"
     def dockerImageTag = "${dockerRepoUrl}/${dockerImageName}:${env.BUILD_NUMBER}"
     
