@@ -1,23 +1,23 @@
 node {
     // reference to maven
     // ** NOTE: This 'maven-3.6.1' Maven tool must be configured in the Jenkins Global Configuration.   
-    def mvnHome = tool 'maven-3'
+    def mvnHome = tool 'maven'
 
     // holds reference to docker image
     def dockerImage
     // ip address of the docker private repository(nexus)
     
-    def dockerRepoUrl = "localhost:8083"
-    def dockerImageName = "hello-world-java"
+    def dockerRepoUrl = "l541024090925.dkr.ecr.us-east-2.amazonaws.com/"
+    def dockerImageName = "springboot"
     def dockerImageTag = "${dockerRepoUrl}/${dockerImageName}:${env.BUILD_NUMBER}"
     
     stage('Clone Repo') { // for display purposes
       // Get some code from a GitHub repository
-      git 'https://github.com/dstar55/docker-hello-world-spring-boot.git'
+      git 'https://github.com/eby-sebastian/docker-hello-world-spring-boot.git'
       // Get the Maven tool.
       // ** NOTE: This 'maven-3.6.1' Maven tool must be configured
       // **       in the global configuration.           
-      mvnHome = tool 'maven-3.6.1'
+      mvnHome = tool 'maven'
     }    
   
     stage('Build Project') {
@@ -43,7 +43,7 @@ node {
       sh "ls -all /var/run/docker.sock"
       sh "mv ./target/hello*.jar ./data" 
       
-      dockerImage = docker.build("hello-world-java")
+      dockerImage = docker.build("springboot")
     }
    
     stage('Deploy Docker Image'){
@@ -51,9 +51,16 @@ node {
       // deploy docker image to nexus
 
       echo "Docker Image Tag Name: ${dockerImageTag}"
+//withCredentials([usernamePassword(credentialsId: 'ecr', passwordVariable: 'pass', usernameVariable: 'user')]) {
+       
+      docker.withRegistry("https://541024090925.dkr.ecr.us-east-2.amazonaws.com", "ecr:us-east-2:aws") {
+	      
+      def customImage = docker.build("hello-world-java:${env.BUILD_ID}")
+                  customImage.push()
 
-      sh "docker login -u admin -p admin123 ${dockerRepoUrl}"
-      sh "docker tag ${dockerImageName} ${dockerImageTag}"
-      sh "docker push ${dockerImageTag}"
+     // docker.image("${dockerImageTag}").push()
+     // sh "docker login -u admin -p admin123 ${dockerRepoUrl}"
+     // sh "docker tag ${dockerImageName} ${dockerImageTag}"
+     // sh "docker push ${dockerImageTag}"
     }
 }
