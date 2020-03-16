@@ -57,6 +57,7 @@ node {
 	      
       def customImage = docker.build("hello-world-java:${env.BUILD_ID}")
 	      customImage.push()
+      }
 
      // docker.image("${dockerImageTag}").push()
      // sh "docker login -u admin -p admin123 ${dockerRepoUrl}"
